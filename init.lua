@@ -1,4 +1,10 @@
-print("set up wifi mode")
+print("set up wifi mode e configuro in e out")
+--utilizzato per comandare il rele della sirena
+gpio.mode(4,gpio.OUTPUT)
+--Utilizzato come input 
+gpio.mode(3,gpio.INPUT,gpio.PULLUP)
+time=0
+
 wifi.setmode(wifi.SOFTAP)
 local cfg
 cfg = {
@@ -9,7 +15,7 @@ cfg = {
 wifi.ap.setip(cfg)
 
 cfg = {
-   ssid = "ESP",
+   ssid = "ESP_Nonno",
    pwd = "12345678"
 }
 wifi.ap.config(cfg)
@@ -29,28 +35,26 @@ collectgarbage()
 --wifi.sta.config("SSID","PassWord")
  --here SSID and PassWord should be modified according your wireless router
 --wifi.sta.connect()
---utilizzato per comandare il rele della sirena
-gpio.mode(4,gpio.OUTPUT)
---Utilizzato come input 
-gpio.mode(3,gpio.INPUT,gpio.PULLUP)
 
-lighton=0
-tmr.alarm(0,1000,1,function()
+
+allarmOn=0
+tmr.alarm(0,500,1,function()
+print("\r\n**allarmOn:",allarmOn)
 if gpio.read(3)== gpio.LOW then 
-    lighton=1 
+    allarmOn=1 
     gpio.write(4,gpio.HIGH)
-	print("\r\n**lighton:1")
 else 
-    lighton=0 
+    allarmOn=0 
     gpio.write(4,gpio.LOW) 
-	print("\r\n**lighton:0")
 end 
 end)
+
 local srv=net.createServer(net.TCP) 
 srv:listen(80,function(conn) 
     conn:on("receive",function(conn,payload) 
     print(payload) 
-    conn:send("<h1> ESP8266<BR>Server is working!</h1><BR>lighton=")
+    conn:send("<h1> ESP8266<BR>Server is working!</h1><BR>allarmOn=")
+	conn:send(allarmOn)
     conn:close()
 	end) 
 end)
