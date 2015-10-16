@@ -1,8 +1,10 @@
 print("set up wifi mode e configuro in e out")
---utilizzato per comandare il rele della sirena
+--utilizzato GPIO2 per comandare il rele della sirena
 gpio.mode(4,gpio.OUTPUT)
---Utilizzato come input 
+--Utilizzato GPIO0 come input 
 gpio.mode(3,gpio.INPUT,gpio.PULLUP)
+gpio.write(4,gpio.LOW)
+
 timeOn=0
 timeOff=0
 local StrUltimoAllarme='' 
