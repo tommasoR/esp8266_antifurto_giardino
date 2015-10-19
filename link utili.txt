@@ -1,0 +1,10 @@
+
+wifi.sleeptype()
+https://github.com/nodemcu/nodemcu-firmware/wiki/nodemcu_api_en#wifisleeptype
+
+
+risparmio energetico
+http://bbs.espressif.com/viewtopic.php?t=133
+
+simple standalone
+http://1br.de/simple-standalone-http-server-made-with-esp8266-and-nodemcu/
