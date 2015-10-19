@@ -78,7 +78,6 @@ srv:listen(80,function(conn)
 	print("\r\n** contatto su gpio.read(4):",gpio.read(3))
     conn:send("<h1> Allarme giardino<BR>Server is working!<BR>allarmOn=")
 	conn:send(allarmOn)
-	conn:send("<BR>Ultimo Allarme ore passate:")
 	if (allarmOn > 0) then
 		s=tmr.time()-timeOn
 		ore=s/3600
@@ -86,6 +85,7 @@ srv:listen(80,function(conn)
 		--print("\r\n**ore passate dall'allarme:",ore)
 		--print(" minuti:",((s-(ore*3600000000))/60000000))--minuti = Int((s - (ore * 3600)) / 60) 
 		--conn:send((tmr.time()-timeOn)/60000000)
+		conn:send("<BR>Ultimo Allarme ore passate:")
 		conn:send(ore)
 		conn:send(" Minuti:")
 		conn:send(minuti)
@@ -96,7 +96,7 @@ srv:listen(80,function(conn)
 			conn:send("<BR>Sta suonando!")
 		end
 	else 
-		conn:send("Mai suonato!")
+		conn:send("<BR>Mai suonato!")
 	end
 	conn:send("</h1>")
     conn:close()
