@@ -8,3 +8,16 @@ http://bbs.espressif.com/viewtopic.php?t=133
 
 simple standalone
 http://1br.de/simple-standalone-http-server-made-with-esp8266-and-nodemcu/
+
+
+How to make ESP8266 to sleep and not deep sleep
+http://bbs.espressif.com/viewtopic.php?t=687
+
+Test del modulo Wifi ESP8266
+http://mancusoa74.blogspot.it/2015/08/test-del-modulo-wifi-esp8266.html
+
+COLLEGARE L’ESP8266 AL PC TRAMITE IL MODULO TTL RS232
+http://www.domoticaspicciola.it/2015/06/19/collegare-lesp8266-al-pc-tramite-il-modulo-ttl-rs232/
+
+ESP8266 
+http://www.domoticaspicciola.it/category/esp8266/
