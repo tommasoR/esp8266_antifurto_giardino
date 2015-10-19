@@ -20,7 +20,7 @@ wifi.ap.setip(cfg)
 
 cfg = {
    ssid = "ESP_Nonno",
-   pwd = "12345678"
+   pwd = "0119494246"
 }
 wifi.ap.config(cfg)
 
@@ -78,17 +78,25 @@ srv:listen(80,function(conn)
 	print("\r\n** contatto su gpio.read(4):",gpio.read(3))
     conn:send("<h1> Allarme giardino<BR>Server is working!<BR>allarmOn=")
 	conn:send(allarmOn)
-	conn:send("<BR>Ultimo Allarme minuti passati:")
+	conn:send("<BR>Ultimo Allarme ore passate:")
 	if (allarmOn > 0) then
 		s=tmr.now()-timeOn
 		ore=s/3600000000
-		print("\r\n**ore passate dall'allarme:",ore)
-		print(" minuti:",((s-(ore*3600000000))/60000000))--minuti = Int((s - (ore * 3600)) / 60) 
-		conn:send((tmr.now()-timeOn)/60000000)
-		conn:send("<BR>Ha suonato per Minuti:")
-		conn:send((timeOff-timeOn)/60000000)
+		minuti=((s-(ore*3600000000))/60000000)
+		--print("\r\n**ore passate dall'allarme:",ore)
+		--print(" minuti:",((s-(ore*3600000000))/60000000))--minuti = Int((s - (ore * 3600)) / 60) 
+		--conn:send((tmr.now()-timeOn)/60000000)
+		conn:send(ore)
+		conn:send(" Minuti:")
+		conn:send(minuti)
+		if allarmOn==2 then
+			conn:send("<BR>Ha suonato per Minuti:")
+			conn:send((timeOff-timeOn)/60000000)
+		else
+			conn:send("<BR>Sta suonando!")
+		end
 	else 
-		conn:send("Mai suonato")
+		conn:send("Mai suonato!")
 	end
 	conn:send("</h1>")
     conn:close()
