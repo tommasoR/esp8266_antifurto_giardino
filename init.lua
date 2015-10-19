@@ -47,9 +47,9 @@ tmr.alarm(0,500,1,function()
 --print("\r\n**allarmOn:",allarmOn)
 if (gpio.read(3) == gpio.LOW and allarmOn == 0) then 
     allarmOn=1
-	timeOn=tmr.now()
+	timeOn=tmr.time()
     gpio.write(4,gpio.HIGH)   
-end 
+end
 if allarmOn == 1 then
 	disattivaSirena()
 end
@@ -59,10 +59,10 @@ end)
 function disattivaSirena()
     --print(tmr.now())
 	--print (gpio.read(4))
-	--300000000 = 5 minuti
-	if(tmr.now()-timeOn> 300000000 and allarmOn == 1) then 
+	--300 = 5 minuti
+	if(tmr.time()-timeOn> 300 and allarmOn == 1) then 
 		allarmOn = 2
-		timeOff=tmr.now()
+		timeOff=tmr.time()
 		gpio.write(4,gpio.LOW)
 	end
 end
@@ -80,18 +80,18 @@ srv:listen(80,function(conn)
 	conn:send(allarmOn)
 	conn:send("<BR>Ultimo Allarme ore passate:")
 	if (allarmOn > 0) then
-		s=tmr.now()-timeOn
-		ore=s/3600000000
-		minuti=((s-(ore*3600000000))/60000000)
+		s=tmr.time()-timeOn
+		ore=s/3600
+		minuti=((s-(ore*3600))/60)
 		--print("\r\n**ore passate dall'allarme:",ore)
 		--print(" minuti:",((s-(ore*3600000000))/60000000))--minuti = Int((s - (ore * 3600)) / 60) 
-		--conn:send((tmr.now()-timeOn)/60000000)
+		--conn:send((tmr.time()-timeOn)/60000000)
 		conn:send(ore)
 		conn:send(" Minuti:")
 		conn:send(minuti)
 		if allarmOn==2 then
 			conn:send("<BR>Ha suonato per Minuti:")
-			conn:send((timeOff-timeOn)/60000000)
+			conn:send((timeOff-timeOn)/60)
 		else
 			conn:send("<BR>Sta suonando!")
 		end
