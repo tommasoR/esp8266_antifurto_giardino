@@ -45,7 +45,7 @@ allarmOn=0
 
 tmr.alarm(0,500,1,function()
 --print("\r\n**allarmOn:",allarmOn)
-if (gpio.read(3) == gpio.LOW and allarmOn == 0) then 
+if (gpio.read(3) == gpio.HIGH and allarmOn == 0) then 
     allarmOn=1
 	timeOn=tmr.time()
     gpio.write(4,gpio.HIGH)   
