@@ -8,9 +8,13 @@ const char WiFiAPPSK[] = "sparkfun";
 /////////////////////
 // Pin Definitions //
 /////////////////////
-const int LED_PIN = 5; // Thing's onboard, green LED
-const int ANALOG_PIN = A0; // The only analog pin on the Thing
-const int DIGITAL_PIN = 12; // Digital pin to be read
+const int DIGITAL_PIN_RELE = 2; // GPIO2
+const int DIGITAL_PIN_SWITCH = 0;//gpio0
+
+
+//const int LED_PIN = 5; // Thing's onboard, green LED
+//const int ANALOG_PIN = A0; // The only analog pin on the Thing
+//const int DIGITAL_PIN = 12; // Digital pin to be read
 
 WiFiServer server(80);
 
@@ -45,9 +49,9 @@ void loop()
     val = -2; // Will print pin reads
   // Otherwise request will be invalid. We'll say as much in HTML
 
-  // Set GPIO5 according to the request
+  // Set GPIO2 according to the request
   if (val >= 0)
-    digitalWrite(LED_PIN, val);
+    digitalWrite(DIGITAL_PIN_RELE, val);
 
   client.flush();
 
@@ -63,11 +67,11 @@ void loop()
   }
   else if (val == -2)
   { // If we're reading pins, print out those values:
-    s += "Analog Pin = ";
-    s += String(analogRead(ANALOG_PIN));
+    s += "Digital Pin 0 = ";
+    s += String(digitalRead(DIGITAL_PIN_SWITCH));
     s += "<br>"; // Go to the next line.
-    s += "Digital Pin 12 = ";
-    s += String(digitalRead(DIGITAL_PIN));
+    s += "Digital Pin 2 = ";
+    s += String(val);
   }
   else
   {
@@ -109,9 +113,9 @@ void setupWiFi()
 void initHardware()
 {
   Serial.begin(115200);
-  pinMode(DIGITAL_PIN, INPUT_PULLUP);
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW);
+  pinMode(DIGITAL_PIN_SWITCH, INPUT_PULLUP);
+  pinMode(DIGITAL_PIN_RELE, OUTPUT);
+  digitalWrite(DIGITAL_PIN_RELE, LOW);
   // Don't need to set ANALOG_PIN as input, 
   // that's all it can be.
 }
