@@ -8,6 +8,7 @@ const char WiFiAPPSK[] = "sparkfun";
 /////////////////////
 // Pin Definitions //
 /////////////////////
+//https://github.com/ekstrand/ESP8266wifi
 const int DIGITAL_PIN_RELE = 2; // GPIO2
 const int DIGITAL_PIN_SWITCH = 0;//gpio0
 
