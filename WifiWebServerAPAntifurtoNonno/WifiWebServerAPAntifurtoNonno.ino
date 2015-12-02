@@ -11,25 +11,33 @@ const char* password = "0119494246";
 // Pin Definitions //
 /////////////////////
 //https://github.com/ekstrand/ESP8266wifi
-const int DIGITAL_PIN_RELE = 2; // GPIO2
-const int DIGITAL_PIN_SWITCH = 0;//gpio0
+const int DIGITAL_PIN_RELE = 2; // GPIO2 rele a 5 volt
+const int DIGITAL_PIN_SWITCH = 0;//gpio0 conatatto magnetico
 
 
 //const int LED_PIN = 5; // Thing's onboard, green LED
 //const int ANALOG_PIN = A0; // The only analog pin on the Thing
 //const int DIGITAL_PIN = 12; // Digital pin to be read
 
+//Variabili
+unsigned long currentMillis = 0L;
+unsigned long EventoIngressoMillis = 0L;
+unsigned long SuonaPerMillis = 600000L;
+bool disattiva_allarme = false;
+
 WiFiServer server(80);
 
-void setup() 
+void setup()
 {
   initHardware();
   setupWiFi();
   server.begin();
 }
 
-void loop() 
+void loop()
 {
+  currentMillis = millis();
+
   // Check if a client has connected
   WiFiClient client = server.available();
   if (!client) {
@@ -43,7 +51,7 @@ void loop()
 
   // Match the request
   int val = -1; // We'll use 'val' to keep track of both the
-                // request type (read/set) and value if set.
+  // request type (read/set) and value if set.
   if (req.indexOf("/led/0") != -1)
     val = 0; // Will write LED low
   else if (req.indexOf("/led/1") != -1)
@@ -66,7 +74,7 @@ void loop()
   if (val >= 0)
   {
     s += "LED is now ";
-    s += (val)?"on":"off";
+    s += (val) ? "on" : "off";
   }
   else if (val == -2)
   { // If we're reading pins, print out those values:
@@ -87,8 +95,19 @@ void loop()
   delay(1);
   Serial.println("Client disonnected");
 
-  // The client will actually be disconnected 
+  // The client will actually be disconnected
   // when the function returns and 'client' object is detroyed
+
+  //gestione allarme
+  if (!disattiva_allarme) {
+    readContatto();
+    if (EventoIngressoMillis > 0) {
+      //evento di apertura porta valido per allarme attendo un minuto prima di suonare
+      if ((currentMillis - EventoIngressoMillis) > 600000L) {
+        attivaSirena();
+      }
+    }
+  }
 }
 
 void setupWiFi()
@@ -99,16 +118,16 @@ void setupWiFi()
   // last two bytes of the MAC (HEX'd) to "Thing-":
   uint8_t mac[WL_MAC_ADDR_LENGTH];
   WiFi.softAPmacAddress(mac);
-//  String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
-//                 String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
-//  macID.toUpperCase();
-//  String AP_NameString = "ESP8266 Thing " + macID;
-//
-//  char AP_NameChar[AP_NameString.length() + 1];
-//  memset(AP_NameChar, 0, AP_NameString.length() + 1);
-//
-//  for (int i=0; i<AP_NameString.length(); i++)
-//    AP_NameChar[i] = AP_NameString.charAt(i);
+  //  String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
+  //                 String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+  //  macID.toUpperCase();
+  //  String AP_NameString = "ESP8266 Thing " + macID;
+  //
+  //  char AP_NameChar[AP_NameString.length() + 1];
+  //  memset(AP_NameChar, 0, AP_NameString.length() + 1);
+  //
+  //  for (int i=0; i<AP_NameString.length(); i++)
+  //    AP_NameChar[i] = AP_NameString.charAt(i);
 
   WiFi.softAP(ssid, password);
 }
@@ -119,8 +138,22 @@ void initHardware()
   pinMode(DIGITAL_PIN_SWITCH, INPUT_PULLUP);
   pinMode(DIGITAL_PIN_RELE, OUTPUT);
   digitalWrite(DIGITAL_PIN_RELE, LOW);
-  // Don't need to set ANALOG_PIN as input, 
+  // Don't need to set ANALOG_PIN as input,
   // that's all it can be.
 }
+
+void readContatto() {
+  int ingresso = digitalRead(DIGITAL_PIN_SWITCH);
+  if (ingresso) {
+    delay(200);
+    if (digitalRead(DIGITAL_PIN_SWITCH) && ((currentMillis - EventoIngressoMillis) > 600000L)) {
+      EventoIngressoMillis = currentMillis;
+    }
+  }
+}
+
+void attivaSirena() {
+}
+
 
 
