@@ -23,7 +23,7 @@ const int DIGITAL_PIN_SWITCH = 0;//gpio0 conatatto magnetico
 unsigned long currentMillis = 0L;
 unsigned long EventoIngressoMillis = 0L;
 unsigned long SuonaPerMillis = 600000L;
-bool disattiva_allarme = false;
+bool allarme_attivo = true;
 
 WiFiServer server(80);
 
@@ -83,6 +83,9 @@ void loop()
     s += "<br>"; // Go to the next line.
     s += "Digital Pin 2 = ";
     s += String(val);
+    s += "<br>"; // Go to the next line.
+    s += "valore variabile EventoIngressoMillis= ";
+    s += String(EventoIngressoMillis);
   }
   else
   {
@@ -99,7 +102,7 @@ void loop()
   // when the function returns and 'client' object is detroyed
 
   //gestione allarme
-  if (!disattiva_allarme) {
+  if (allarme_attivo) {
     readContatto();
     if (EventoIngressoMillis > 0) {
       //evento di apertura porta valido per allarme attendo un minuto prima di suonare
@@ -146,13 +149,17 @@ void readContatto() {
   int ingresso = digitalRead(DIGITAL_PIN_SWITCH);
   if (ingresso) {
     delay(200);
-    if (digitalRead(DIGITAL_PIN_SWITCH) && ((currentMillis - EventoIngressoMillis) > 600000L)) {
+    if (digitalRead(DIGITAL_PIN_SWITCH) && ((currentMillis - EventoIngressoMillis) > 120000L)) {
       EventoIngressoMillis = currentMillis;
     }
   }
 }
 
 void attivaSirena() {
+  if((currentMillis - EventoIngressoMillis) < SuonaPerMillis){
+    digitalWrite(DIGITAL_PIN_RELE, HIGH);       // turn on Sirena
+    ESP.deepSleep(25000000, WAKE_RF_DEFAULT); 
+  } 
 }
 
 
