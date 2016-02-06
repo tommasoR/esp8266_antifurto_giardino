@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h>
 //versione 1.0
 //ultima modifica 6/2/2016
+/* Insertita gestione per BUILTIN_LED e avvisare che antifurto ha suonato
+ */
 
 
 //////////////////////
@@ -39,6 +41,7 @@ void initHardware()
   digitalWrite(DIGITAL_PIN_RELE, LOW);
   // Don't need to set ANALOG_PIN as input,
   // that's all it can be.
+  pinMode(BUILTIN_LED, OUTPUT);
 }
 
 void setupWiFi()
