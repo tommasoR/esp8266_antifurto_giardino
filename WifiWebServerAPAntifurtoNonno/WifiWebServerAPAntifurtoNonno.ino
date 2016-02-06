@@ -1,4 +1,7 @@
 #include <ESP8266WiFi.h>
+//versione 1.0
+//ultima modifica 6/2/2016
+
 
 //////////////////////
 // WiFi Definitions //
@@ -26,6 +29,56 @@ unsigned long SuonaPerMillis = 600000L;
 bool allarme_attivo = true;
 
 WiFiServer server(80);
+
+
+void initHardware()
+{
+  Serial.begin(115200);
+  pinMode(DIGITAL_PIN_SWITCH, INPUT_PULLUP);
+  pinMode(DIGITAL_PIN_RELE, OUTPUT);
+  digitalWrite(DIGITAL_PIN_RELE, LOW);
+  // Don't need to set ANALOG_PIN as input,
+  // that's all it can be.
+}
+
+void setupWiFi()
+{
+  WiFi.mode(WIFI_AP);
+
+  // Do a little work to get a unique-ish name. Append the
+  // last two bytes of the MAC (HEX'd) to "Thing-":
+  uint8_t mac[WL_MAC_ADDR_LENGTH];
+  WiFi.softAPmacAddress(mac);
+  //  String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
+  //                 String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
+  //  macID.toUpperCase();
+  //  String AP_NameString = "ESP8266 Thing " + macID;
+  //
+  //  char AP_NameChar[AP_NameString.length() + 1];
+  //  memset(AP_NameChar, 0, AP_NameString.length() + 1);
+  //
+  //  for (int i=0; i<AP_NameString.length(); i++)
+  //    AP_NameChar[i] = AP_NameString.charAt(i);
+
+  WiFi.softAP(ssid, password);
+}
+
+void readContatto() {
+  int ingresso = digitalRead(DIGITAL_PIN_SWITCH);
+  if (ingresso) {
+    delay(200);
+    if (digitalRead(DIGITAL_PIN_SWITCH) && ((currentMillis - EventoIngressoMillis) > 120000L)) {
+      EventoIngressoMillis = currentMillis;
+    }
+  }
+}
+
+void attivaSirena() {
+  if((currentMillis - EventoIngressoMillis) < SuonaPerMillis){
+    digitalWrite(DIGITAL_PIN_RELE, HIGH);       // turn on Sirena
+    ESP.deepSleep(25000000, WAKE_RF_DEFAULT); 
+  } 
+}
 
 void setup()
 {
@@ -113,54 +166,6 @@ void loop()
   }
 }
 
-void setupWiFi()
-{
-  WiFi.mode(WIFI_AP);
-
-  // Do a little work to get a unique-ish name. Append the
-  // last two bytes of the MAC (HEX'd) to "Thing-":
-  uint8_t mac[WL_MAC_ADDR_LENGTH];
-  WiFi.softAPmacAddress(mac);
-  //  String macID = String(mac[WL_MAC_ADDR_LENGTH - 2], HEX) +
-  //                 String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
-  //  macID.toUpperCase();
-  //  String AP_NameString = "ESP8266 Thing " + macID;
-  //
-  //  char AP_NameChar[AP_NameString.length() + 1];
-  //  memset(AP_NameChar, 0, AP_NameString.length() + 1);
-  //
-  //  for (int i=0; i<AP_NameString.length(); i++)
-  //    AP_NameChar[i] = AP_NameString.charAt(i);
-
-  WiFi.softAP(ssid, password);
-}
-
-void initHardware()
-{
-  Serial.begin(115200);
-  pinMode(DIGITAL_PIN_SWITCH, INPUT_PULLUP);
-  pinMode(DIGITAL_PIN_RELE, OUTPUT);
-  digitalWrite(DIGITAL_PIN_RELE, LOW);
-  // Don't need to set ANALOG_PIN as input,
-  // that's all it can be.
-}
-
-void readContatto() {
-  int ingresso = digitalRead(DIGITAL_PIN_SWITCH);
-  if (ingresso) {
-    delay(200);
-    if (digitalRead(DIGITAL_PIN_SWITCH) && ((currentMillis - EventoIngressoMillis) > 120000L)) {
-      EventoIngressoMillis = currentMillis;
-    }
-  }
-}
-
-void attivaSirena() {
-  if((currentMillis - EventoIngressoMillis) < SuonaPerMillis){
-    digitalWrite(DIGITAL_PIN_RELE, HIGH);       // turn on Sirena
-    ESP.deepSleep(25000000, WAKE_RF_DEFAULT); 
-  } 
-}
 
 
 
