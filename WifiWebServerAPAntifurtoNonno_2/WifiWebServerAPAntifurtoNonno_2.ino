@@ -1,7 +1,10 @@
 #include <ESP8266WiFi.h>
 //versione 2.0
 //ultima modifica 6/2/2016
-/* Insertita gestione per BUILTIN_LED e avvisare che antifurto ha suonato
+/* Inserita gestione per BUILTIN_LED e avvisare che l'antifurto ha suonato
+ * inserimento antifurto su alimentazione
+ * enable antifurto su contatto magnetico
+ * ritardo su secondo evento e poi suona la sirena per x minuti
  */
 
 
